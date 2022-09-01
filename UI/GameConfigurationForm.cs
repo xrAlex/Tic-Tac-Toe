@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Tic_Tac_Toe
+namespace Tic_Tac_Toe.UI
 {
-    public partial class Configuration : Form
+    public partial class GameConfigurationForm : Form
     {
-        public Configuration()
+        public GameConfigurationForm()
         {
             InitializeComponent();
         }
@@ -13,14 +13,10 @@ namespace Tic_Tac_Toe
         private void button1_Click(object sender, EventArgs e)
         {
             this.Hide();
-            var game = new GameForm(Convert.ToInt32(numericUpDown1.Value),
+            var game = new GameBoardForm(Convert.ToInt32(numericUpDown1.Value),
                 checkBox1.Checked, checkBox2.Checked);
             game.Show();
         }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }
+

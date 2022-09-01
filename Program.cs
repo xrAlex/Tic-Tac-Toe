@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Tic_Tac_Toe.UI;
 
 namespace Tic_Tac_Toe
 {
@@ -13,7 +14,7 @@ namespace Tic_Tac_Toe
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Configuration());
+            Application.Run(new GameConfigurationForm());
         }
     }
 }

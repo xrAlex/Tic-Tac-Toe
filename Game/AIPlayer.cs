@@ -1,37 +1,38 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
-namespace Tic_Tac_Toe
+namespace Tic_Tac_Toe.Game
 {
-    public class AI
+    public sealed class AiPlayer
     {
         private readonly char _ai;
         private readonly char _enemy;
-        private int _weight;
 
-        public AI(char p)
+        public AiPlayer(char playerMark)
         {
-            _ai = p;
+            _ai = playerMark;
             _enemy = _ai == 'X' ? 'O' : 'X';
         }
 
         /// <summary>
         /// Calculates best move for AI
         /// </summary>
-        public Point CalculateBestMove(Game game)
+        public Point CalculateBestMove(GameBoard game)
         {
             double bestScore = -999999999;
             var bestMove = new Point();
-            _weight = 0;
-            for (var i = 0; i < game.BoardSideLight; i++)
+
+            for (var i = 0; i < game.BoardSize; i++)
             {
-                for (var j = 0; j < game.BoardSideLight; j++)
+                for (var j = 0; j < game.BoardSize; j++)
                 {
                     if (game.Board[i, j] != 'X' && game.Board[i, j] != 'O')
                     {
                         game.Board[i, j] = _ai;
+                        
                         var score = MiniMax(game, 1, false);
+                        
                         game.Board[i, j] = '-';
+                        
                         if (score > bestScore)
                         {
                             bestScore = score;
@@ -43,18 +44,15 @@ namespace Tic_Tac_Toe
   
             }
 
-            Console.WriteLine(_weight);
             return bestMove;
         }
 
         /// <summary>
         /// Minimax algorithm implementation
         /// </summary>
-        public double MiniMax(Game g, int depth, bool maximazing)
+        private double MiniMax(GameBoard gameBoard, int depth, bool maximazing)
         {
-            _weight++;
-            
-            if (g.BoardSideLight > 3)
+            if (gameBoard.BoardSize > 3)
             {
                 if (depth > 3)
                 {
@@ -62,8 +60,8 @@ namespace Tic_Tac_Toe
                 }
             }
  
-            var win = g.IsWin(_ai);
-            var lose = g.IsWin(_enemy);
+            var win = gameBoard.IsWin(_ai);
+            var lose = gameBoard.IsWin(_enemy);
             
             if (win)
             {
@@ -74,7 +72,7 @@ namespace Tic_Tac_Toe
                 return -10 / depth;
             }
 
-            if (g.IsTie())
+            if (gameBoard.IsTie())
             {
                 return 0;
             }
@@ -82,15 +80,16 @@ namespace Tic_Tac_Toe
             if (maximazing)
             {
                 double bestScoreMin = -999999999;
-                for (var i = 0; i < g.BoardSideLight; i++)
+                for (var i = 0; i < gameBoard.BoardSize; i++)
                 {
-                    for (var j = 0; j < g.BoardSideLight; j++)
+                    for (var j = 0; j < gameBoard.BoardSize; j++)
                     {
-                        if (g.Board[i, j] != 'X' && g.Board[i, j] != 'O')
+                        if (gameBoard.Board[i, j] != 'X' && gameBoard.Board[i, j] != 'O')
                         {
-                            g.Board[i, j] = _ai;
-                            var score = MiniMax(g, depth + 1, false);
-                            g.Board[i, j] = '-';
+                            gameBoard.Board[i, j] = _ai;
+                            var score = MiniMax(gameBoard, depth + 1, false);
+                            gameBoard.Board[i, j] = '-';
+                            
                             if (score > bestScoreMin)
                             {
                                 bestScoreMin = score;
@@ -103,15 +102,16 @@ namespace Tic_Tac_Toe
             }
 
             double bestScoreMax = 999999999;
-            for (var i = 0; i < g.BoardSideLight; i++)
+            for (var i = 0; i < gameBoard.BoardSize; i++)
             {
-                for (var j = 0; j < g.BoardSideLight; j++)
+                for (var j = 0; j < gameBoard.BoardSize; j++)
                 {
-                    if (g.Board[i, j] != 'X' && g.Board[i, j] != 'O')
+                    if (gameBoard.Board[i, j] != 'X' && gameBoard.Board[i, j] != 'O')
                     {
-                        g.Board[i, j] = _enemy;
-                        var score = MiniMax(g, depth + 1, true);
-                        g.Board[i, j] = '-';
+                        gameBoard.Board[i, j] = _enemy;
+                        var score = MiniMax(gameBoard, depth + 1, true);
+                        gameBoard.Board[i, j] = '-';
+                        
                         if (score < bestScoreMax)
                         {
                             bestScoreMax = score;

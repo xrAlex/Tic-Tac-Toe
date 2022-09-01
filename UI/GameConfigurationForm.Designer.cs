@@ -1,6 +1,6 @@
-﻿namespace Tic_Tac_Toe
+﻿namespace Tic_Tac_Toe.UI
 {
-    partial class Configuration
+    partial class GameConfigurationForm
     {
         /// <summary>
         /// Required designer variable.
@@ -68,7 +68,7 @@
             0});
             this.numericUpDown1.Location = new System.Drawing.Point(189, 18);
             this.numericUpDown1.Maximum = new decimal(new int[] {
-            99,
+            5,
             0,
             0,
             0});
@@ -123,7 +123,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
@@ -135,4 +134,3 @@
         private System.Windows.Forms.CheckBox checkBox2;
     }
 }
-

@@ -1,6 +1,6 @@
-﻿namespace Tic_Tac_Toe
+﻿namespace Tic_Tac_Toe.UI
 {
-    sealed partial class GameForm
+    sealed partial class GameBoardForm
     {
         /// <summary>
         /// Required designer variable.
@@ -52,7 +52,7 @@
             this.Controls.Add(this.GameField);
             this.Name = "GameForm";
             this.Text = "Tic Tac Toe (Test job for Elephant Games)";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Game_Form_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GameForm_Closing);
             this.Shown += new System.EventHandler(this.GameForm_Shown);
             this.ResumeLayout(false);
 

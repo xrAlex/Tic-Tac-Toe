@@ -46,20 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AI.cs" />
-    <Compile Include="Configuration.cs">
+    <Compile Include="Game\AIPlayer.cs" />
+    <Compile Include="Game\GameBoard.cs" />
+    <Compile Include="UI\GameBoardForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Configuration.Designer.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="GameForm.cs">
+    <Compile Include="UI\GameBoardForm.Designer.cs">
+      <DependentUpon>GameBoardForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\GameConfigurationForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GameForm.Designer.cs" />
+    <Compile Include="UI\GameConfigurationForm.Designer.cs">
+      <DependentUpon>GameConfigurationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Configuration.resx" />
-    <EmbeddedResource Include="GameForm.resx" />
+    <Compile Include="Game\WinCondition.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -82,5 +85,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

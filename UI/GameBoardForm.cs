@@ -2,19 +2,23 @@
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using Tic_Tac_Toe.Game;
 
-namespace Tic_Tac_Toe
+
+namespace Tic_Tac_Toe.UI
 {
-    public sealed partial class GameForm : Form
+    public sealed partial class GameBoardForm : Form
     {
         private readonly bool _playVsAi;
         private readonly bool _isDemoMode;
-        private Button[,] _buttons;
-        private Game _game;
+        private readonly Random _random = new Random((int)DateTime.Now.Ticks);
         private readonly int _boardSize;
-        private char _turn;
 
-        public GameForm(int boardSize, bool playVsAi, bool isDemoMode)
+        private Button[,] _buttons;
+        private GameBoard _game;
+        private char _currentTurn;
+
+        public GameBoardForm(int boardSize, bool playVsAi, bool isDemoMode)
         {
             InitializeComponent();
 
@@ -27,24 +31,44 @@ namespace Tic_Tac_Toe
         /// Game starts only when game window is shown
         /// </summary>
         private void GameForm_Shown(object sender, EventArgs e)
+            => NewGame();
+
+        private void GameForm_Closing(object sender, FormClosingEventArgs e)
+            => Application.Exit();
+
+        private void NewGame()
         {
-            NewGame();
+            _currentTurn = 'X';
+
+            InitUi();
+            _game = new GameBoard(_boardSize);
 
             if (_isDemoMode)
             {
+                _currentTurn = 'O';
                 AiStart();
+                return;
+            }
+
+            if (_playVsAi)
+            {
+                if (_random.Next(0, 100) > 50)
+                {
+                    _currentTurn = 'O';
+                    AiStart();
+                }
             }
         }
 
+
         /// <summary>
-        /// Ai makes turn first
+        /// Ai makes turn first, uses random cell for it
         /// </summary>
         private void AiStart()
         {
-            var random = new Random((int)DateTime.Now.Ticks);
             var count = _buttons.Length;
-            var randomRow = random.Next(0, count / _boardSize);
-            var randomCell = random.Next(0, count / _boardSize);
+            var randomRow = _random.Next(0, count / _boardSize);
+            var randomCell = _random.Next(0, count / _boardSize);
             var btn = _buttons[randomRow, randomCell];
             btn.Enabled = false;
 
@@ -67,15 +91,10 @@ namespace Tic_Tac_Toe
             Play(x, y);
         }
 
-        private void Game_Form_FormClosing(object sender, FormClosingEventArgs e)
-            => Application.Exit();
-
         /// <summary>
-        /// Draws a symbol when Player pressing button and go to next turn
+        /// Draws a symbol on board when player press button and go to next turn
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GameButtonClicked(object sender, EventArgs e)
+        private void BoardButtonClicked(object sender, EventArgs e)
         {
             var btn = (Button)sender;
             btn.Enabled = false;
@@ -119,20 +138,14 @@ namespace Tic_Tac_Toe
                         TabStop = false
                     };
 
-                    btn.Click += GameButtonClicked;
+                    btn.Click += BoardButtonClicked;
 
                     _buttons[i, j] = btn;
                 }
             }
         }
 
-        private void ClearGameField()
-        {
-            GameField.Controls.Clear();
-            GameField.RowStyles.Clear();
-        }
-
-        private void NewGame()
+        private void InitUi()
         {
             float cellSize = 100 / _boardSize;
 
@@ -157,9 +170,12 @@ namespace Tic_Tac_Toe
             }
 
             GameField.Update();
+        }
 
-            _game = new Game(_boardSize);
-            _turn = 'X';
+        private void ClearGameField()
+        {
+            GameField.Controls.Clear();
+            GameField.RowStyles.Clear();
         }
 
         private void PlayAgain()
@@ -171,11 +187,6 @@ namespace Tic_Tac_Toe
             if (result == DialogResult.Yes)
             {
                 NewGame();
-
-                if (_isDemoMode)
-                {
-                    AiStart();
-                }
             }
             else
             {
@@ -190,15 +201,15 @@ namespace Tic_Tac_Toe
                 Thread.Sleep(1000);
             }
 
-            _buttons[x, y].Text = _turn.ToString();
+            _buttons[x, y].Text = _currentTurn.ToString();
             _buttons[x, y].Enabled = false;
             _buttons[x, y].Update();
 
-            _game.MarkBoard(x, y, _turn);
+            _game.MarkBoard(x, y, _currentTurn);
 
-            if (_game.IsWin(_turn))
+            if (_game.IsWin(_currentTurn))
             {
-                MessageBox.Show(_turn + ": Won!!", "Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(_currentTurn + ": Won!!", "Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 PlayAgain();
             }
             else if (_game.IsTie())
@@ -208,35 +219,35 @@ namespace Tic_Tac_Toe
             }
             else
             {
-                ChangeTurn();
+                NextTurn();
             }
         }
 
-        private void ChangeTurn()
+        private void NextTurn()
         {
-            if (_turn == 'X')
+            if (_currentTurn == 'X')
             {
-                _turn = 'O';
+                _currentTurn = 'O';
 
                 if (_playVsAi || _isDemoMode)
                 {
-                    AiTurn('O');
+                    AiTurn(_currentTurn);
                 }
             }
             else
             {
-                _turn = 'X';
+                _currentTurn = 'X';
 
                 if (_isDemoMode)
                 {
-                    AiTurn('X');
+                    AiTurn(_currentTurn);
                 }
             }
         }
 
-        private void AiTurn(char p)
+        private void AiTurn(char playerMark)
         {
-            var ai = new AI(p);
+            var ai = new AiPlayer(playerMark);
             var move = ai.CalculateBestMove(_game);
             var x = move.X;
             var y = move.Y;
